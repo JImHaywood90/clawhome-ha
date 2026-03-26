@@ -1,0 +1,35 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Connect to ClawHome",
+        "description": "Enter the hostname and port of your ClawHome server.",
+        "data": {
+          "host": "Host",
+          "port": "Port"
+        }
+      },
+      "zeroconf_confirm": {
+        "title": "ClawHome Discovered",
+        "description": "ClawHome was found at {host}:{port}. Add this device?"
+      }
+    },
+    "error": {
+      "cannot_connect": "Cannot connect to ClawHome at the specified address."
+    },
+    "abort": {
+      "already_configured": "This ClawHome instance is already configured.",
+      "cannot_connect": "Cannot connect to the discovered ClawHome instance."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "ClawHome Options",
+        "data": {
+          "scan_interval": "Polling interval (seconds)"
+        }
+      }
+    }
+  }
+}
