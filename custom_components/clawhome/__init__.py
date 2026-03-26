@@ -12,10 +12,7 @@ from .coordinator import ClawHomeCoordinator
 
 _LOGGER = logging.getLogger(__name__)
 
-type ClawHomeConfigEntry = ConfigEntry[ClawHomeCoordinator]
-
-
-async def async_setup_entry(hass: HomeAssistant, entry: ClawHomeConfigEntry) -> bool:
+async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Set up ClawHome from a config entry."""
     host = entry.data[CONF_HOST]
     port = entry.data[CONF_PORT]
@@ -33,7 +30,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ClawHomeConfigEntry) -> 
     return True
 
 
-async def async_unload_entry(hass: HomeAssistant, entry: ClawHomeConfigEntry) -> bool:
+async def async_unload_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
     """Unload a config entry."""
     unload_ok = await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
     if unload_ok:
@@ -42,6 +39,6 @@ async def async_unload_entry(hass: HomeAssistant, entry: ClawHomeConfigEntry) ->
     return unload_ok
 
 
-async def _async_update_listener(hass: HomeAssistant, entry: ClawHomeConfigEntry) -> None:
+async def _async_update_listener(hass: HomeAssistant, entry: ConfigEntry) -> None:
     """Handle options update — recreate coordinator with new scan interval."""
     await hass.config_entries.async_reload(entry.entry_id)
