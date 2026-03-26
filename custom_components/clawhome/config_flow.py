@@ -7,9 +7,9 @@ from typing import Any
 
 import aiohttp
 import voluptuous as vol
-from homeassistant.components.zeroconf import ZeroconfServiceInfo
-from homeassistant.config_entries import ConfigFlow, ConfigFlowResult, OptionsFlow
+from homeassistant.config_entries import ConfigFlow, OptionsFlow
 from homeassistant.core import callback
+from homeassistant.data_entry_flow import FlowResult
 
 from .const import (
     API_INFO,
@@ -49,19 +49,15 @@ class ClawHomeConfigFlow(ConfigFlow, domain=DOMAIN):
         self._port: int = DEFAULT_PORT
         self._name: str = "ClawHome"
 
-    async def async_step_zeroconf(
-        self, discovery_info: ZeroconfServiceInfo
-    ) -> ConfigFlowResult:
+    async def async_step_zeroconf(self, discovery_info: Any) -> FlowResult:
         """Handle zeroconf discovery."""
         self._host = str(discovery_info.host)
         self._port = discovery_info.port or DEFAULT_PORT
         self._name = discovery_info.name.split(".")[0]
 
-        # Check we haven't already configured this instance
         await self.async_set_unique_id(f"clawhome_{self._host}_{self._port}")
         self._abort_if_unique_id_configured()
 
-        # Validate connection
         info = await _validate_connection(self._host, self._port)
         if not info:
             return self.async_abort(reason="cannot_connect")
@@ -71,7 +67,7 @@ class ClawHomeConfigFlow(ConfigFlow, domain=DOMAIN):
 
     async def async_step_zeroconf_confirm(
         self, user_input: dict[str, Any] | None = None
-    ) -> ConfigFlowResult:
+    ) -> FlowResult:
         """Confirm zeroconf discovery."""
         if user_input is not None:
             return self.async_create_entry(
@@ -95,7 +91,7 @@ class ClawHomeConfigFlow(ConfigFlow, domain=DOMAIN):
 
     async def async_step_user(
         self, user_input: dict[str, Any] | None = None
-    ) -> ConfigFlowResult:
+    ) -> FlowResult:
         """Handle manual configuration."""
         errors: dict[str, str] = {}
 
@@ -135,22 +131,19 @@ class ClawHomeConfigFlow(ConfigFlow, domain=DOMAIN):
     @callback
     def async_get_options_flow(config_entry):
         """Get the options flow."""
-        return ClawHomeOptionsFlow(config_entry)
+        return ClawHomeOptionsFlow()
 
 
 class ClawHomeOptionsFlow(OptionsFlow):
     """Handle options for ClawHome."""
 
-    def __init__(self, config_entry) -> None:
-        self._config_entry = config_entry
-
     async def async_step_init(
         self, user_input: dict[str, Any] | None = None
-    ) -> ConfigFlowResult:
+    ) -> FlowResult:
         if user_input is not None:
             return self.async_create_entry(data=user_input)
 
-        current = self._config_entry.options.get(
+        current = self.config_entry.options.get(
             CONF_SCAN_INTERVAL, DEFAULT_SCAN_INTERVAL
         )
         return self.async_show_form(

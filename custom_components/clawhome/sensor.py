@@ -9,7 +9,7 @@ from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.update_coordinator import CoordinatorEntity
 
 from .const import DOMAIN
-from .coordinator import ClawHomeCoordinator, ClawHomeData
+from .coordinator import ClawHomeCoordinator
 
 
 async def async_setup_entry(
@@ -18,7 +18,7 @@ async def async_setup_entry(
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Set up ClawHome sensors."""
-    coordinator: ClawHomeCoordinator = entry.runtime_data
+    coordinator: ClawHomeCoordinator = hass.data[DOMAIN][entry.entry_id]
 
     entities: list[SensorEntity] = [
         ClawHomeBrainStatusSensor(coordinator, entry),

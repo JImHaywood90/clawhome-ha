@@ -20,7 +20,7 @@ async def async_setup_entry(
     async_add_entities: AddEntitiesCallback,
 ) -> None:
     """Set up ClawHome switches."""
-    coordinator: ClawHomeCoordinator = entry.runtime_data
+    coordinator: ClawHomeCoordinator = hass.data[DOMAIN][entry.entry_id]
     async_add_entities([
         ClawHomeBrainSwitch(coordinator, entry),
         ClawHomeAutonomousSwitch(coordinator, entry),
